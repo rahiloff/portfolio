@@ -115,7 +115,6 @@
         starsPositions[i * 3] = (Math.random() - 0.5) * 120;
         starsPositions[i * 3 + 1] = (Math.random() - 0.5) * 120;
         starsPositions[i * 3 + 2] = (Math.random() - 0.5) * 120;
-        starsSizes[i] = Math.random() * 1.5;
     }
 
     const starsGeometry = new THREE.BufferGeometry();

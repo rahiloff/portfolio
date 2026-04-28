@@ -36,6 +36,23 @@
 </head>
 <body>
 
+    <!-- ===== TERMINAL BOOT PRELOADER ===== -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-terminal">
+            <div class="preloader-terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="preloader-terminal-title">rahil@devops-server:~ — boot</span>
+            </div>
+            <div class="preloader-terminal-body" id="boot-output"></div>
+        </div>
+    </div>
+    <div class="preloader-scanlines"></div>
+
+    <!-- ===== MAIN PORTFOLIO CONTENT ===== -->
+    <div id="main-content" class="main-content-hidden">
+
     <!-- Particles Background -->
     <div id="tsparticles"></div>
 
@@ -53,6 +70,9 @@
             </ul>
             <div class="nav-toggle" id="nav-toggle">
                 <span></span><span></span><span></span>
+            </div>
+            <div class="cmd-kbd-hint" id="cmd-kbd-hint" title="Open Command Palette">
+                <kbd>Ctrl</kbd>+<kbd>K</kbd>
             </div>
         </div>
     </nav>
@@ -414,6 +434,8 @@
         </div>
     </footer>
 
+    </div><!-- /main-content -->
+
     <!-- ===== SCRIPTS ===== -->
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -426,9 +448,13 @@
     <!-- AOS -->
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
+    <!-- Preloader (runs first, before portfolio JS) -->
+    <script src="js/preloader.js"></script>
+
     <!-- Custom Scripts -->
     <script src="js/three-scene.js"></script>
     <script src="js/skills-orbs.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/command-palette.js"></script>
 </body>
 </html>

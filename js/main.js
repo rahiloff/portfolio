@@ -245,4 +245,61 @@ document.addEventListener('DOMContentLoaded', () => {
             blinkCursor.style.opacity = blinkCursor.style.opacity === '0' ? '1' : '0';
         }, 530);
     }
+
+    // ===== CUSTOM CURSOR WITH TRAIL =====
+    if (!isMobile) {
+        const cursorDot = document.createElement('div');
+        cursorDot.classList.add('cursor-dot');
+        document.body.appendChild(cursorDot);
+
+        const trailCount = 8;
+        const trails = [];
+        for (let i = 0; i < trailCount; i++) {
+            const t = document.createElement('div');
+            t.classList.add('cursor-trail');
+            document.body.appendChild(t);
+            trails.push({ el: t, x: 0, y: 0 });
+        }
+
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = mouseX - 4 + 'px';
+            cursorDot.style.top = mouseY - 4 + 'px';
+        });
+
+        // Animate trail particles
+        function animateTrail() {
+            let prevX = mouseX, prevY = mouseY;
+            trails.forEach((trail, i) => {
+                const speed = 0.25 - i * 0.02;
+                trail.x += (prevX - trail.x) * speed;
+                trail.y += (prevY - trail.y) * speed;
+                trail.el.style.left = trail.x - 2 + 'px';
+                trail.el.style.top = trail.y - 2 + 'px';
+                trail.el.style.opacity = (1 - i / trailCount) * 0.5;
+                trail.el.style.transform = `scale(${1 - i * 0.08})`;
+                prevX = trail.x;
+                prevY = trail.y;
+            });
+            requestAnimationFrame(animateTrail);
+        }
+        animateTrail();
+
+        // Scale cursor on interactive elements
+        document.querySelectorAll('a, button, .btn, .skill-tag, .project-card, .nav-toggle').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorDot.style.transform = 'scale(2.5)';
+                cursorDot.style.background = '#39ff14';
+                cursorDot.style.boxShadow = '0 0 20px #39ff14, 0 0 40px rgba(57,255,20,0.4)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorDot.style.transform = 'scale(1)';
+                cursorDot.style.background = '#00f5ff';
+                cursorDot.style.boxShadow = '0 0 12px #00f5ff, 0 0 24px rgba(0,245,255,0.3)';
+            });
+        });
+    }
 });

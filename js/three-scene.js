@@ -1,12 +1,13 @@
 /**
- * Three.js Hero Scene — Wireframe Globe with Orbiting Nodes & Starfield
+ * Three.js Hero Scene — Wireframe Globe with Orbiting Nodes, Starfield,
+ * Orbit Rings, Shooting Stars & Globe Pulse
  */
 (function () {
     const canvas = document.getElementById('hero-canvas');
     if (!canvas) return;
 
     const isMobile = window.innerWidth < 768;
-    if (isMobile) return; // Skip heavy 3D on mobile
+    if (isMobile) return;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -84,7 +85,6 @@
     let connectionLines = [];
 
     function updateConnections() {
-        // Remove old and dispose geometries to prevent memory leak
         connectionLines.forEach(line => {
             line.geometry.dispose();
             scene.remove(line);
@@ -131,6 +131,115 @@
     const stars = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(stars);
 
+    // === Orbit Rings (Saturn-style) ===
+    const ringGroup = new THREE.Group();
+    const ringConfigs = [
+        { radius: 6.2, tube: 0.015, color: 0x00f5ff, opacity: 0.12, rotX: 1.2, rotZ: 0.3 },
+        { radius: 7.0, tube: 0.01, color: 0x39ff14, opacity: 0.08, rotX: 0.8, rotZ: -0.5 },
+        { radius: 7.8, tube: 0.01, color: 0x00f5ff, opacity: 0.06, rotX: 1.5, rotZ: 0.7 }
+    ];
+
+    ringConfigs.forEach(cfg => {
+        const ringGeo = new THREE.TorusGeometry(cfg.radius, cfg.tube, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({
+            color: cfg.color,
+            transparent: true,
+            opacity: cfg.opacity
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = cfg.rotX;
+        ring.rotation.z = cfg.rotZ;
+        ringGroup.add(ring);
+    });
+    scene.add(ringGroup);
+
+    // === Shooting Stars / Comets ===
+    const comets = [];
+    const cometCount = 5;
+
+    function createComet() {
+        const trailLen = 30;
+        const positions = new Float32Array(trailLen * 3);
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+            color: Math.random() > 0.5 ? 0x00f5ff : 0x39ff14,
+            size: 0.08,
+            transparent: true,
+            opacity: 0
+        });
+
+        const comet = new THREE.Points(geometry, material);
+        comet.userData = {
+            active: false,
+            speed: 0.3 + Math.random() * 0.4,
+            life: 0,
+            maxLife: 80 + Math.random() * 60,
+            startX: 0, startY: 0, startZ: 0,
+            dirX: 0, dirY: 0, dirZ: 0,
+            trailLen: trailLen
+        };
+
+        scene.add(comet);
+        return comet;
+    }
+
+    for (let i = 0; i < cometCount; i++) {
+        comets.push(createComet());
+    }
+
+    function launchComet(comet) {
+        const d = comet.userData;
+        d.active = true;
+        d.life = 0;
+        d.startX = (Math.random() - 0.5) * 60;
+        d.startY = (Math.random() - 0.5) * 40 + 15;
+        d.startZ = (Math.random() - 0.5) * 30 - 10;
+        d.dirX = (Math.random() - 0.5) * 0.8;
+        d.dirY = -(0.5 + Math.random() * 0.5);
+        d.dirZ = (Math.random() - 0.5) * 0.3;
+        comet.material.opacity = 0.9;
+    }
+
+    function updateComets() {
+        comets.forEach(comet => {
+            const d = comet.userData;
+            if (!d.active) {
+                if (Math.random() < 0.003) launchComet(comet);
+                return;
+            }
+
+            d.life++;
+            const positions = comet.geometry.attributes.position.array;
+
+            // Shift trail backward
+            for (let i = d.trailLen - 1; i > 0; i--) {
+                positions[i * 3] = positions[(i - 1) * 3];
+                positions[i * 3 + 1] = positions[(i - 1) * 3 + 1];
+                positions[i * 3 + 2] = positions[(i - 1) * 3 + 2];
+            }
+
+            // New head position
+            positions[0] = d.startX + d.dirX * d.life * d.speed;
+            positions[1] = d.startY + d.dirY * d.life * d.speed;
+            positions[2] = d.startZ + d.dirZ * d.life * d.speed;
+
+            comet.geometry.attributes.position.needsUpdate = true;
+
+            // Fade out
+            comet.material.opacity = (1 - d.life / d.maxLife) * 0.8;
+
+            if (d.life >= d.maxLife) {
+                d.active = false;
+                comet.material.opacity = 0;
+            }
+        });
+    }
+
+    // === Globe Pulse Phase ===
+    let pulsePhase = 0;
+
     // === Mouse Parallax ===
     const mouse = { x: 0, y: 0 };
     const targetRotation = { x: 0, y: 0 };
@@ -155,6 +264,14 @@
         innerGlobe.rotation.y -= 0.0015;
         innerGlobe.rotation.x -= 0.0008;
 
+        // Globe pulse — breathing opacity
+        pulsePhase += 0.015;
+        globe.material.opacity = 0.15 + Math.sin(pulsePhase) * 0.05;
+
+        // Orbit rings slow rotation
+        ringGroup.rotation.y += 0.001;
+        ringGroup.rotation.x += 0.0003;
+
         // Node orbiting
         nodes.forEach(node => {
             const d = node.userData;
@@ -170,6 +287,9 @@
         if (frameCount % 10 === 0) {
             updateConnections();
         }
+
+        // Shooting stars
+        updateComets();
 
         // Stars subtle rotation
         stars.rotation.y += 0.0001;

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rahil-devops.netlify.app/sitemap.xml

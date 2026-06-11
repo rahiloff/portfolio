@@ -11,7 +11,8 @@
     <meta name="keywords"
         content="DevOps Engineer Kerala, Cloud Engineer India, AWS DevOps, Docker Kubernetes, GitLab CI, Linux Server Admin, Hire DevOps Engineer">
     <meta name="author" content="Mohammed Rahil T">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#0a0a0a">
     <link rel="canonical" href="https://therahil.shop/">
 
     <!-- Open Graph -->
@@ -55,22 +56,36 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Mohammed Rahil T",
-      "jobTitle": "DevOps & Cloud Engineer",
-      "url": "https://therahil.shop",
-      "email": "rahilkkln@gmail.com",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Malappuram",
-        "addressRegion": "Kerala",
-        "addressCountry": "India"
-      },
-      "sameAs": [
-        "https://linkedin.com/in/rahilt",
-        "https://github.com/rahiloff"
-      ],
-      "knowsAbout": ["DevOps", "AWS", "Docker", "Kubernetes", "Linux", "CI/CD", "Terraform"]
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://therahil.shop/#person",
+          "name": "Mohammed Rahil T",
+          "jobTitle": "DevOps & Cloud Engineer",
+          "url": "https://therahil.shop/",
+          "image": "https://therahil.shop/assets/og-image.png",
+          "email": "rahilkkln@gmail.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Malappuram",
+            "addressRegion": "Kerala",
+            "addressCountry": "India"
+          },
+          "sameAs": [
+            "https://linkedin.com/in/rahilt",
+            "https://github.com/rahiloff"
+          ],
+          "knowsAbout": ["DevOps", "AWS", "Docker", "Kubernetes", "Linux", "CI/CD", "Terraform"]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://therahil.shop/#website",
+          "url": "https://therahil.shop/",
+          "name": "Mohammed Rahil T | DevOps Portfolio",
+          "description": "Portfolio of Mohammed Rahil T, a DevOps & Cloud Engineer specializing in AWS, Docker, Kubernetes, and CI/CD.",
+          "publisher": { "@id": "https://therahil.shop/#person" }
+        }
+      ]
     }
     </script>
 </head>
@@ -92,7 +107,7 @@
     <div class="preloader-scanlines"></div>
 
     <!-- ===== MAIN PORTFOLIO CONTENT ===== -->
-    <div id="main-content" class="main-content-hidden">
+    <main id="main-content" class="main-content-hidden">
 
         <!-- Particles Background -->
         <div id="tsparticles"></div>
@@ -109,7 +124,7 @@
                     <li><a href="#achievements">stats()</a></li>
                     <li><a href="#contact">contact()</a></li>
                 </ul>
-                <div class="nav-toggle" id="nav-toggle">
+                <div class="nav-toggle" id="nav-toggle" role="button" aria-label="Toggle navigation" tabindex="0">
                     <span></span><span></span><span></span>
                 </div>
                 <div class="cmd-kbd-hint" id="cmd-kbd-hint" title="Open Command Palette">
@@ -147,7 +162,7 @@
                     </div>
                 </div>
             </div>
-            <div class="scroll-indicator">
+            <div class="scroll-indicator" aria-hidden="true">
                 <div class="mouse"></div>
                 <span>scroll down</span>
             </div>
@@ -509,7 +524,7 @@
             </div>
         </footer>
 
-    </div><!-- /main-content -->
+    </main><!-- /main-content -->
 
     <!-- ===== SCRIPTS ===== -->
     <!-- Three.js -->

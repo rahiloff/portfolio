@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof Typed !== 'undefined') {
             new Typed('#typed-output', {
                 strings: [
-                    'DevOps Engineer',
+                    'Certified DevOps Engineer',
                     'Cloud Architect',
                     'Linux Server Admin',
                     'CI/CD Specialist',

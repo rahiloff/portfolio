@@ -5,6 +5,26 @@
 document.addEventListener('DOMContentLoaded', () => {
     const isMobile = window.innerWidth < 768;
 
+    // ===== HERO VIDEO SOUND TOGGLE =====
+    const heroVideo = document.getElementById('hero-video');
+    const videoToggle = document.getElementById('hero-video-toggle');
+    const videoToggleIcon = document.getElementById('video-toggle-icon');
+
+    if (heroVideo && videoToggle) {
+        // Start muted (required for autoplay), toggle unmutes
+        videoToggle.addEventListener('click', () => {
+            if (heroVideo.muted) {
+                heroVideo.muted = false;
+                videoToggleIcon.className = 'fas fa-volume-up';
+                videoToggle.title = 'Mute';
+            } else {
+                heroVideo.muted = true;
+                videoToggleIcon.className = 'fas fa-volume-mute';
+                videoToggle.title = 'Unmute';
+            }
+        });
+    }
+
     // ===== NAVBAR (safe to initialize immediately) =====
     const navbar = document.getElementById('navbar');
     const navLinks = document.getElementById('nav-links');
@@ -83,6 +103,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.style.background = '';
                 contactForm.reset();
             }, 3000);
+        });
+    }
+
+    // ===== SCROLL PARALLAX ZOOM ON HERO VIDEO =====
+    const heroSection = document.getElementById('hero');
+    const heroVideoEl = document.getElementById('hero-video');
+    const heroContent = document.querySelector('.hero-content');
+
+    if (heroSection && heroVideoEl && !isMobile) {
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const heroH = heroSection.offsetHeight;
+            if (scrollY < heroH) {
+                const progress = scrollY / heroH;
+                // Video zooms in as you scroll
+                const scale = 1 + progress * 0.15;
+                heroVideoEl.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                // Content fades and lifts slightly
+                if (heroContent) {
+                    heroContent.style.opacity = 1 - progress * 1.2;
+                    heroContent.style.transform = `translateY(${-progress * 40}px)`;
+                }
+            }
+        }, { passive: true });
+    }
+
+    // ===== MAGNETIC HOVER ON HERO BUTTONS =====
+    if (!isMobile) {
+        document.querySelectorAll('.hero-cta .btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) scale(1.04)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0) scale(1)';
+            });
         });
     }
 
@@ -293,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             animateTrail();
 
             // Scale cursor on interactive elements
-            document.querySelectorAll('a, button, .btn, .skill-tag, .project-card, .nav-toggle').forEach(el => {
+            document.querySelectorAll('a, button, .btn, .skill-tag, .project-card, .nav-toggle, .hero-video-toggle').forEach(el => {
                 el.addEventListener('mouseenter', () => {
                     cursorDot.style.transform = 'scale(2.5)';
                     cursorDot.style.background = '#39ff14';

@@ -225,17 +225,185 @@ a:hover { color: var(--accent-green); }
     overflow: hidden;
 }
 
+.hero > .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0 0 0 clamp(24px, 5vw, 80px);
+}
+
+/* --- Hero Video Background --- */
+.hero-video-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    filter: brightness(0.55) saturate(1.2) contrast(1.1);
+    transition: filter 1.5s ease;
+}
+
+.hero-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(10, 10, 15, 0.92) 0%,
+        rgba(10, 10, 15, 0.80) 30%,
+        rgba(10, 10, 15, 0.35) 55%,
+        rgba(10, 10, 15, 0.10) 75%,
+        rgba(10, 10, 15, 0.15) 100%
+    );
+    z-index: 1;
+}
+
+.hero-video-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(10, 10, 15, 0.6) 0%, transparent 15%, transparent 85%, rgba(10, 10, 15, 0.7) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hero-video-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    animation: grainShift 0.5s steps(4) infinite;
+}
+
+@keyframes grainShift {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-2px, 2px); }
+    50% { transform: translate(2px, -1px); }
+    75% { transform: translate(-1px, -2px); }
+    100% { transform: translate(0, 0); }
+}
+
+/* Video toggle button */
+.hero-video-toggle {
+    position: absolute;
+    bottom: 90px;
+    right: 40px;
+    z-index: 5;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 245, 255, 0.3);
+    background: rgba(13, 17, 23, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--accent-cyan);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.15);
+}
+
+.hero-video-toggle:hover {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Hero Badge — Animated Gradient Border */
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(10, 10, 15, 0.5);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-green);
+    margin-bottom: 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: relative;
+    border: none;
+    z-index: 1;
+}
+
+.hero-badge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 1px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan), var(--accent-green));
+    background-size: 200% 100%;
+    animation: badgeBorderGlow 3s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+}
+
+@keyframes badgeBorderGlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+.hero-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+    animation: pulse 2s infinite;
+}
+
 #hero-canvas {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    z-index: 0;
+    z-index: 4;
+    pointer-events: none;
 }
 
 .hero-content {
     position: relative;
-    z-index: 2;
-    max-width: 700px;
+    z-index: 5;
+    max-width: 520px;
+    padding-left: 28px;
+}
+
+/* Left Accent Glow Line */
+.hero-content::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent-cyan), var(--accent-green), transparent);
+    border-radius: 3px;
+    box-shadow: 0 0 12px rgba(0, 245, 255, 0.4), 0 0 30px rgba(0, 245, 255, 0.15);
+    animation: accentLinePulse 3s ease-in-out infinite;
+}
+
+@keyframes accentLinePulse {
+    0%, 100% { opacity: 0.8; box-shadow: 0 0 12px rgba(0, 245, 255, 0.4), 0 0 30px rgba(0, 245, 255, 0.15); }
+    50% { opacity: 1; box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 50px rgba(0, 245, 255, 0.25); }
 }
 
 .hero-greeting {
@@ -246,6 +414,7 @@ a:hover { color: var(--accent-green); }
     display: flex;
     align-items: center;
     gap: 8px;
+    text-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
 }
 
 .hero-greeting::before {
@@ -254,16 +423,25 @@ a:hover { color: var(--accent-green); }
 }
 
 .hero-name {
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 16px;
+    white-space: nowrap;
     background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 50%, var(--accent-green) 100%);
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     position: relative;
     cursor: default;
+    filter: drop-shadow(0 0 30px rgba(0, 245, 255, 0.15));
+    animation: nameGradientShift 6s ease-in-out infinite;
+}
+
+@keyframes nameGradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .hero-name:hover {
@@ -288,6 +466,7 @@ a:hover { color: var(--accent-green); }
     color: var(--text-secondary);
     margin-bottom: 8px;
     min-height: 36px;
+    text-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
 }
 
 .hero-typed-wrapper .typed-cursor {
@@ -321,28 +500,54 @@ a:hover { color: var(--accent-green); }
     align-items: center;
     gap: 8px;
     text-decoration: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .btn-primary {
     background: linear-gradient(135deg, var(--accent-cyan), #0099cc);
     color: var(--bg-primary);
     font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: skewX(-20deg);
+    transition: none;
+    opacity: 0;
+}
+
+.btn-primary:hover::after {
+    animation: btnShine 0.6s ease forwards;
+}
+
+@keyframes btnShine {
+    0% { left: -60%; opacity: 1; }
+    100% { left: 120%; opacity: 0; }
 }
 
 .btn-primary:hover {
-    box-shadow: 0 0 30px rgba(0, 245, 255, 0.4);
-    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(0, 245, 255, 0.5), 0 0 60px rgba(0, 245, 255, 0.2);
+    transform: translateY(-3px) scale(1.02);
     color: var(--bg-primary);
 }
 
 .btn-outline {
-    background: transparent;
+    background: rgba(0, 245, 255, 0.05);
     color: var(--accent-cyan);
     border: 1px solid var(--accent-cyan);
 }
 
 .btn-outline:hover {
-    background: rgba(0, 245, 255, 0.1);
+    background: rgba(0, 245, 255, 0.15);
     box-shadow: var(--glow-cyan);
     transform: translateY(-2px);
     color: var(--accent-cyan);
@@ -364,6 +569,9 @@ a:hover { color: var(--accent-green); }
     height: 44px;
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255,255,255,0.03);
 }
 
 .hero-socials a:hover {
@@ -378,7 +586,7 @@ a:hover { color: var(--accent-green); }
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
+    z-index: 5;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -408,6 +616,108 @@ a:hover { color: var(--accent-green); }
     background: var(--accent-cyan);
     border-radius: 2px;
     animation: scrollDown 1.5s ease-in-out infinite;
+}
+
+/* ===== VIDEO SHOWCASE SECTION ===== */
+.video-showcase-section {
+    background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(0, 245, 255, 0.02) 50%, var(--bg-primary) 100%);
+}
+
+.video-showcase {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.video-showcase-frame {
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(13, 17, 23, 0.95);
+    border: 1px solid rgba(0, 245, 255, 0.15);
+    box-shadow:
+        0 0 80px rgba(0, 245, 255, 0.08),
+        0 24px 80px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: var(--transition);
+}
+
+.video-showcase-frame:hover {
+    border-color: rgba(0, 245, 255, 0.3);
+    box-shadow:
+        0 0 100px rgba(0, 245, 255, 0.12),
+        0 24px 80px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-4px);
+}
+
+.video-showcase-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.video-showcase-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: 8px;
+}
+
+.video-showcase-player {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+}
+
+.showcase-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.video-showcase-glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: 0 0 16px 16px;
+    background: linear-gradient(135deg, transparent 40%, rgba(0, 245, 255, 0.05) 50%, transparent 60%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.video-showcase-frame:hover .video-showcase-glow {
+    opacity: 1;
+}
+
+.video-showcase-info {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.video-info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    border-radius: 24px;
+    background: rgba(0, 245, 255, 0.06);
+    border: 1px solid rgba(0, 245, 255, 0.15);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.video-info-badge i {
+    color: var(--accent-cyan);
+    font-size: 1rem;
+    animation: pulse 2s infinite;
 }
 
 /* ===== ABOUT ===== */
@@ -1689,6 +1999,50 @@ a:hover { color: var(--accent-green); }
     #skills-canvas {
         display: none;
     }
+
+    /* Video hero mobile adjustments */
+    .hero-video {
+        filter: brightness(0.45) saturate(1.1) contrast(1.05);
+    }
+
+    .hero-video-overlay {
+        background: linear-gradient(
+            180deg,
+            rgba(10, 10, 15, 0.85) 0%,
+            rgba(10, 10, 15, 0.55) 50%,
+            rgba(10, 10, 15, 0.70) 100%
+        );
+    }
+
+    .hero-content {
+        max-width: 100%;
+        padding-right: 0;
+    }
+
+    .hero-video-toggle {
+        bottom: 80px;
+        right: 20px;
+        width: 38px;
+        height: 38px;
+        font-size: 0.8rem;
+    }
+
+    .hero-video-grain {
+        display: none;
+    }
+
+    .video-showcase-frame {
+        border-radius: 12px;
+    }
+
+    .video-showcase-player {
+        aspect-ratio: 16/9;
+    }
+
+    .video-info-badge {
+        font-size: 0.72rem;
+        padding: 8px 16px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1697,4 +2051,17 @@ a:hover { color: var(--accent-green); }
     .btn { width: 100%; justify-content: center; }
     .achievements-grid { grid-template-columns: 1fr 1fr; }
     .container { padding: 0 16px; }
+
+    .hero-badge {
+        font-size: 0.65rem;
+        padding: 5px 12px;
+    }
+
+    .video-showcase-header {
+        padding: 10px 14px;
+    }
+
+    .video-showcase-title {
+        font-size: 0.65rem;
+    }
 }

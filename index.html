@@ -51,7 +51,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2.0">
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
@@ -136,9 +136,25 @@
 
         <!-- ===== HERO ===== -->
         <section class="hero section" id="hero">
+            <!-- Cinematic Video Background -->
+            <div class="hero-video-wrapper">
+                <video class="hero-video" autoplay muted loop playsinline preload="auto" id="hero-video">
+                    <source src="Intro video.mp4" type="video/mp4">
+                </video>
+                <div class="hero-video-overlay"></div>
+                <div class="hero-video-grain"></div>
+                <div class="hero-video-vignette"></div>
+            </div>
+
+            <!-- 3D Floating Elements Canvas -->
             <canvas id="hero-canvas"></canvas>
+
             <div class="container">
                 <div class="hero-content">
+                    <div class="hero-badge" data-aos="fade-right" data-aos-delay="100">
+                        <span class="hero-badge-dot"></span>
+                        <span>Available for opportunities</span>
+                    </div>
                     <p class="hero-greeting" data-aos="fade-right" data-aos-delay="200">Hello, World! I'm</p>
                     <h1 class="hero-name" data-aos="fade-right" data-aos-delay="400">Mohammed Rahil T <span style="font-size: 0.5em; opacity: 0.8; vertical-align: middle;">(Rahil)</span></h1>
                     <div class="hero-typed-wrapper" data-aos="fade-right" data-aos-delay="600">
@@ -162,9 +178,48 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Video Play/Pause Toggle -->
+            <button class="hero-video-toggle" id="hero-video-toggle" aria-label="Unmute video" title="Unmute">
+                <i class="fas fa-volume-mute" id="video-toggle-icon"></i>
+            </button>
+
             <div class="scroll-indicator" aria-hidden="true">
                 <div class="mouse"></div>
                 <span>scroll down</span>
+            </div>
+        </section>
+
+        <!-- ===== VIDEO SHOWCASE ===== -->
+        <section class="section video-showcase-section" id="intro-video">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title"><span class="prefix">#</span> Introduction</h2>
+                    <p class="section-subtitle">// watch_intro.sh</p>
+                </div>
+                <div class="video-showcase" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="video-showcase-frame">
+                        <div class="video-showcase-header">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                            <span class="video-showcase-title">rahil@devops:~ — intro.mp4</span>
+                        </div>
+                        <div class="video-showcase-player">
+                            <video class="showcase-video" controls preload="metadata" poster="" id="showcase-video">
+                                <source src="Intro video.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="video-showcase-glow"></div>
+                        </div>
+                    </div>
+                    <div class="video-showcase-info" data-aos="fade-up" data-aos-delay="400">
+                        <div class="video-info-badge">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Watch my intro to learn about my DevOps journey</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -545,7 +600,7 @@
     <!-- Custom Scripts -->
     <script src="js/three-scene.js"></script>
     <script src="js/skills-orbs.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/main.js?v=2.0"></script>
     <script src="js/command-palette.js"></script>
 </body>
 

@@ -1,6 +1,7 @@
 /**
- * Three.js Hero Scene — Wireframe Globe with Orbiting Nodes, Starfield,
- * Orbit Rings, Shooting Stars & Globe Pulse
+ * Three.js Hero Scene — Floating 3D Geometric Shapes, Starfield & Shooting Stars
+ * Globe removed to keep video clearly visible.
+ * Shapes positioned at the edges so the center video is unobstructed.
  */
 (function () {
     const canvas = document.getElementById('hero-canvas');
@@ -13,108 +14,97 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 14;
-    camera.position.x = 4;
+    camera.position.x = 0;
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
 
-    // === Wireframe Globe ===
-    const globeGeometry = new THREE.IcosahedronGeometry(4.5, 3);
-    const globeMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00f5ff,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.18
-    });
-    const globe = new THREE.Mesh(globeGeometry, globeMaterial);
-    scene.add(globe);
+    // === Floating 3D Geometric Shapes (edges only — avoid center) ===
+    const floatingShapes = [];
+    const shapeGroup = new THREE.Group();
 
-    // Inner globe for depth
-    const innerGeometry = new THREE.IcosahedronGeometry(4.2, 2);
-    const innerMaterial = new THREE.MeshBasicMaterial({
-        color: 0x39ff14,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.06
-    });
-    const innerGlobe = new THREE.Mesh(innerGeometry, innerMaterial);
-    scene.add(innerGlobe);
+    const shapeConfigs = [
+        // Far LEFT edge shapes (behind text content area)
+        { type: 'icosahedron', size: 0.6, x: -14, y: 4, z: -8, color: 0x00f5ff, opacity: 0.10, rotSpeed: { x: 0.003, y: 0.005, z: 0.002 }, floatAmp: 0.8, floatSpeed: 0.5 },
+        { type: 'octahedron', size: 0.45, x: -12, y: -3, z: -5, color: 0x39ff14, opacity: 0.08, rotSpeed: { x: 0.004, y: 0.003, z: 0.006 }, floatAmp: 1.0, floatSpeed: 0.7 },
+        { type: 'tetrahedron', size: 0.35, x: -16, y: 0, z: -10, color: 0xbd00ff, opacity: 0.06, rotSpeed: { x: 0.005, y: 0.002, z: 0.004 }, floatAmp: 0.6, floatSpeed: 0.4 },
 
-    // === Orbiting Nodes ===
-    const nodeCount = 35;
-    const nodes = [];
-    const nodeGroup = new THREE.Group();
+        // TOP edge shapes
+        { type: 'dodecahedron', size: 0.5, x: -5, y: 8, z: -12, color: 0x00f5ff, opacity: 0.07, rotSpeed: { x: 0.002, y: 0.004, z: 0.003 }, floatAmp: 0.7, floatSpeed: 0.6 },
+        { type: 'torusKnot', size: 0.35, x: 5, y: 9, z: -14, color: 0x39ff14, opacity: 0.05, rotSpeed: { x: 0.003, y: 0.006, z: 0.002 }, floatAmp: 0.5, floatSpeed: 0.3 },
 
-    for (let i = 0; i < nodeCount; i++) {
-        const size = 0.04 + Math.random() * 0.06;
-        const nodeGeometry = new THREE.SphereGeometry(size, 8, 8);
-        const color = Math.random() > 0.5 ? 0x00f5ff : 0x39ff14;
-        const nodeMaterial = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.8 });
-        const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+        // BOTTOM edge shapes
+        { type: 'tetrahedron', size: 0.5, x: -8, y: -7, z: -9, color: 0x00f5ff, opacity: 0.07, rotSpeed: { x: 0.004, y: 0.005, z: 0.001 }, floatAmp: 0.6, floatSpeed: 0.55 },
+        { type: 'octahedron', size: 0.4, x: 6, y: -8, z: -7, color: 0xbd00ff, opacity: 0.08, rotSpeed: { x: 0.003, y: 0.002, z: 0.007 }, floatAmp: 0.5, floatSpeed: 0.65 },
 
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const radius = 5.2 + Math.random() * 2.5;
+        // RIGHT edge shapes (subtle, don't block video subject)
+        { type: 'icosahedron', size: 0.5, x: 16, y: 5, z: -10, color: 0xbd00ff, opacity: 0.06, rotSpeed: { x: 0.002, y: 0.003, z: 0.005 }, floatAmp: 1.0, floatSpeed: 0.35 },
+        { type: 'torus', size: 0.4, x: 18, y: -3, z: -8, color: 0x00f5ff, opacity: 0.07, rotSpeed: { x: 0.006, y: 0.002, z: 0.003 }, floatAmp: 0.5, floatSpeed: 0.8 },
 
-        node.position.set(
-            radius * Math.sin(phi) * Math.cos(theta),
-            radius * Math.sin(phi) * Math.sin(theta),
-            radius * Math.cos(phi)
-        );
+        // FAR BACKGROUND (very subtle depth fill)
+        { type: 'icosahedron', size: 1.2, x: -20, y: 10, z: -30, color: 0x00f5ff, opacity: 0.03, rotSpeed: { x: 0.001, y: 0.002, z: 0.001 }, floatAmp: 1.5, floatSpeed: 0.2 },
+        { type: 'octahedron', size: 1.5, x: 22, y: -8, z: -35, color: 0x39ff14, opacity: 0.02, rotSpeed: { x: 0.002, y: 0.001, z: 0.002 }, floatAmp: 2.0, floatSpeed: 0.15 },
+        { type: 'dodecahedron', size: 1.0, x: 0, y: -12, z: -25, color: 0xbd00ff, opacity: 0.03, rotSpeed: { x: 0.001, y: 0.003, z: 0.002 }, floatAmp: 1.0, floatSpeed: 0.25 },
+    ];
 
-        node.userData = {
-            theta, phi, radius,
-            speed: 0.0008 + Math.random() * 0.0015,
-            originalRadius: radius
+    shapeConfigs.forEach(cfg => {
+        let geometry;
+        switch (cfg.type) {
+            case 'icosahedron':
+                geometry = new THREE.IcosahedronGeometry(cfg.size, 1);
+                break;
+            case 'octahedron':
+                geometry = new THREE.OctahedronGeometry(cfg.size, 0);
+                break;
+            case 'tetrahedron':
+                geometry = new THREE.TetrahedronGeometry(cfg.size, 0);
+                break;
+            case 'dodecahedron':
+                geometry = new THREE.DodecahedronGeometry(cfg.size, 0);
+                break;
+            case 'torusKnot':
+                geometry = new THREE.TorusKnotGeometry(cfg.size, cfg.size * 0.3, 64, 8, 2, 3);
+                break;
+            case 'torus':
+                geometry = new THREE.TorusGeometry(cfg.size, cfg.size * 0.25, 12, 24);
+                break;
+            default:
+                geometry = new THREE.IcosahedronGeometry(cfg.size, 1);
+        }
+
+        const material = new THREE.MeshBasicMaterial({
+            color: cfg.color,
+            wireframe: true,
+            transparent: true,
+            opacity: cfg.opacity
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(cfg.x, cfg.y, cfg.z);
+        mesh.userData = {
+            rotSpeed: cfg.rotSpeed,
+            floatAmp: cfg.floatAmp,
+            floatSpeed: cfg.floatSpeed,
+            baseY: cfg.y,
+            phaseOffset: Math.random() * Math.PI * 2
         };
 
-        nodeGroup.add(node);
-        nodes.push(node);
-    }
-    scene.add(nodeGroup);
-
-    // === Connection Lines ===
-    const linesMaterial = new THREE.LineBasicMaterial({
-        color: 0x00f5ff,
-        transparent: true,
-        opacity: 0.08
+        shapeGroup.add(mesh);
+        floatingShapes.push(mesh);
     });
 
-    let connectionLines = [];
+    scene.add(shapeGroup);
 
-    function updateConnections() {
-        connectionLines.forEach(line => {
-            line.geometry.dispose();
-            scene.remove(line);
-        });
-        connectionLines = [];
-
-        for (let i = 0; i < nodes.length; i++) {
-            for (let j = i + 1; j < nodes.length; j++) {
-                const dist = nodes[i].position.distanceTo(nodes[j].position);
-                if (dist < 3.5) {
-                    const geometry = new THREE.BufferGeometry().setFromPoints([
-                        nodes[i].position.clone(),
-                        nodes[j].position.clone()
-                    ]);
-                    const line = new THREE.Line(geometry, linesMaterial);
-                    scene.add(line);
-                    connectionLines.push(line);
-                }
-            }
-        }
-    }
-
-    // === Starfield ===
-    const starsCount = 2500;
+    // === Starfield (subtle background stars) ===
+    const starsCount = 1800;
     const starsPositions = new Float32Array(starsCount * 3);
 
     for (let i = 0; i < starsCount; i++) {
-        starsPositions[i * 3] = (Math.random() - 0.5) * 120;
-        starsPositions[i * 3 + 1] = (Math.random() - 0.5) * 120;
-        starsPositions[i * 3 + 2] = (Math.random() - 0.5) * 120;
+        starsPositions[i * 3] = (Math.random() - 0.5) * 140;
+        starsPositions[i * 3 + 1] = (Math.random() - 0.5) * 140;
+        starsPositions[i * 3 + 2] = (Math.random() - 0.5) * 140;
     }
 
     const starsGeometry = new THREE.BufferGeometry();
@@ -122,50 +112,28 @@
 
     const starsMaterial = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: 0.12,
+        size: 0.08,
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.5,
         sizeAttenuation: true
     });
 
     const stars = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(stars);
 
-    // === Orbit Rings (Saturn-style) ===
-    const ringGroup = new THREE.Group();
-    const ringConfigs = [
-        { radius: 6.2, tube: 0.015, color: 0x00f5ff, opacity: 0.12, rotX: 1.2, rotZ: 0.3 },
-        { radius: 7.0, tube: 0.01, color: 0x39ff14, opacity: 0.08, rotX: 0.8, rotZ: -0.5 },
-        { radius: 7.8, tube: 0.01, color: 0x00f5ff, opacity: 0.06, rotX: 1.5, rotZ: 0.7 }
-    ];
-
-    ringConfigs.forEach(cfg => {
-        const ringGeo = new THREE.TorusGeometry(cfg.radius, cfg.tube, 16, 100);
-        const ringMat = new THREE.MeshBasicMaterial({
-            color: cfg.color,
-            transparent: true,
-            opacity: cfg.opacity
-        });
-        const ring = new THREE.Mesh(ringGeo, ringMat);
-        ring.rotation.x = cfg.rotX;
-        ring.rotation.z = cfg.rotZ;
-        ringGroup.add(ring);
-    });
-    scene.add(ringGroup);
-
     // === Shooting Stars / Comets ===
     const comets = [];
-    const cometCount = 5;
+    const cometCount = 4;
 
     function createComet() {
-        const trailLen = 30;
+        const trailLen = 25;
         const positions = new Float32Array(trailLen * 3);
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
         const material = new THREE.PointsMaterial({
             color: Math.random() > 0.5 ? 0x00f5ff : 0x39ff14,
-            size: 0.08,
+            size: 0.06,
             transparent: true,
             opacity: 0
         });
@@ -199,36 +167,32 @@
         d.dirX = (Math.random() - 0.5) * 0.8;
         d.dirY = -(0.5 + Math.random() * 0.5);
         d.dirZ = (Math.random() - 0.5) * 0.3;
-        comet.material.opacity = 0.9;
+        comet.material.opacity = 0.7;
     }
 
     function updateComets() {
         comets.forEach(comet => {
             const d = comet.userData;
             if (!d.active) {
-                if (Math.random() < 0.003) launchComet(comet);
+                if (Math.random() < 0.002) launchComet(comet);
                 return;
             }
 
             d.life++;
             const positions = comet.geometry.attributes.position.array;
 
-            // Shift trail backward
             for (let i = d.trailLen - 1; i > 0; i--) {
                 positions[i * 3] = positions[(i - 1) * 3];
                 positions[i * 3 + 1] = positions[(i - 1) * 3 + 1];
                 positions[i * 3 + 2] = positions[(i - 1) * 3 + 2];
             }
 
-            // New head position
             positions[0] = d.startX + d.dirX * d.life * d.speed;
             positions[1] = d.startY + d.dirY * d.life * d.speed;
             positions[2] = d.startZ + d.dirZ * d.life * d.speed;
 
             comet.geometry.attributes.position.needsUpdate = true;
-
-            // Fade out
-            comet.material.opacity = (1 - d.life / d.maxLife) * 0.8;
+            comet.material.opacity = (1 - d.life / d.maxLife) * 0.6;
 
             if (d.life >= d.maxLife) {
                 d.active = false;
@@ -236,9 +200,6 @@
             }
         });
     }
-
-    // === Globe Pulse Phase ===
-    let pulsePhase = 0;
 
     // === Mouse Parallax ===
     const mouse = { x: 0, y: 0 };
@@ -250,56 +211,38 @@
     });
 
     // === Animation Loop ===
-    let frameCount = 0;
     const clock = new THREE.Clock();
 
     function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
-        frameCount++;
 
-        // Globe rotation
-        globe.rotation.y += 0.002;
-        globe.rotation.x += 0.0005;
-        innerGlobe.rotation.y -= 0.0015;
-        innerGlobe.rotation.x -= 0.0008;
-
-        // Globe pulse — breathing opacity
-        pulsePhase += 0.015;
-        globe.material.opacity = 0.15 + Math.sin(pulsePhase) * 0.05;
-
-        // Orbit rings slow rotation
-        ringGroup.rotation.y += 0.001;
-        ringGroup.rotation.x += 0.0003;
-
-        // Node orbiting
-        nodes.forEach(node => {
-            const d = node.userData;
-            d.theta += d.speed;
-            node.position.set(
-                d.radius * Math.sin(d.phi) * Math.cos(d.theta),
-                d.radius * Math.sin(d.phi) * Math.sin(d.theta) + Math.sin(elapsed + d.theta) * 0.3,
-                d.radius * Math.cos(d.phi)
-            );
+        // === Floating 3D Shapes Animation ===
+        floatingShapes.forEach(shape => {
+            const d = shape.userData;
+            shape.rotation.x += d.rotSpeed.x;
+            shape.rotation.y += d.rotSpeed.y;
+            shape.rotation.z += d.rotSpeed.z;
+            shape.position.y = d.baseY + Math.sin(elapsed * d.floatSpeed + d.phaseOffset) * d.floatAmp;
+            shape.position.x += Math.sin(elapsed * d.floatSpeed * 0.5 + d.phaseOffset) * 0.001;
         });
 
-        // Update connections every 10 frames
-        if (frameCount % 10 === 0) {
-            updateConnections();
-        }
+        // Subtle parallax for floating shapes
+        shapeGroup.rotation.x += (mouse.y * 0.015 - shapeGroup.rotation.x) * 0.008;
+        shapeGroup.rotation.y += (mouse.x * 0.015 - shapeGroup.rotation.y) * 0.008;
 
         // Shooting stars
         updateComets();
 
         // Stars subtle rotation
-        stars.rotation.y += 0.0001;
-        stars.rotation.x += 0.00005;
+        stars.rotation.y += 0.00008;
+        stars.rotation.x += 0.00003;
 
-        // Mouse parallax
-        targetRotation.x = mouse.y * 0.15;
-        targetRotation.y = mouse.x * 0.15;
-        camera.rotation.x += (targetRotation.x - camera.rotation.x) * 0.03;
-        camera.rotation.y += (targetRotation.y - camera.rotation.y) * 0.03;
+        // Camera parallax
+        targetRotation.x = mouse.y * 0.08;
+        targetRotation.y = mouse.x * 0.08;
+        camera.rotation.x += (targetRotation.x - camera.rotation.x) * 0.02;
+        camera.rotation.y += (targetRotation.y - camera.rotation.y) * 0.02;
 
         renderer.render(scene, camera);
     }

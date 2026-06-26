@@ -31,11 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const navToggle = document.getElementById('nav-toggle');
     const sections = document.querySelectorAll('.section[id]');
 
-    // Scroll: add blur background
+    // Scroll: add blur background (throttled via rAF)
+    let scrollTicking = false;
     window.addEventListener('scroll', () => {
-        navbar.classList.toggle('scrolled', window.scrollY > 50);
-        updateActiveSection();
-    });
+        if (!scrollTicking) {
+            scrollTicking = true;
+            requestAnimationFrame(() => {
+                navbar.classList.toggle('scrolled', window.scrollY > 50);
+                updateActiveSection();
+                scrollTicking = false;
+            });
+        }
+    }, { passive: true });
 
     // Mobile hamburger
     navToggle.addEventListener('click', () => {
@@ -195,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fullScreen: false,
                 particles: {
                     number: {
-                        value: isMobile ? 30 : 70,
+                        value: isMobile ? 20 : 50,
                         density: { enable: true, area: 900 }
                     },
                     color: { value: ['#00f5ff', '#39ff14', '#bd00ff'] },
@@ -315,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cursorDot.classList.add('cursor-dot');
             document.body.appendChild(cursorDot);
 
-            const trailCount = 8;
+            const trailCount = 5;
             const trails = [];
             for (let i = 0; i < trailCount; i++) {
                 const t = document.createElement('div');

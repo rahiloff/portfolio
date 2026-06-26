@@ -18,7 +18,7 @@
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
 
     // === Floating 3D Geometric Shapes (edges only — avoid center) ===
@@ -98,7 +98,7 @@
     scene.add(shapeGroup);
 
     // === Starfield (subtle background stars) ===
-    const starsCount = 1800;
+    const starsCount = 800;
     const starsPositions = new Float32Array(starsCount * 3);
 
     for (let i = 0; i < starsCount; i++) {
@@ -215,6 +215,7 @@
 
     function animate() {
         requestAnimationFrame(animate);
+        if (!isVisible) return;
         const elapsed = clock.getElapsedTime();
 
         // === Floating 3D Shapes Animation ===
@@ -246,6 +247,13 @@
 
         renderer.render(scene, camera);
     }
+
+    // === Visibility Observer — pause rendering when hero is off-screen ===
+    let isVisible = true;
+    const visibilityObserver = new IntersectionObserver((entries) => {
+        isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.05 });
+    visibilityObserver.observe(canvas.parentElement);
 
     animate();
 

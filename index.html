@@ -34,12 +34,20 @@
     <!-- Favicon -->
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 
-    <!-- Google Fonts -->
+    <!-- Resource Hints -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+
+    <!-- Google Fonts (trimmed weights) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
         rel="stylesheet">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="intro-video.mp4" as="video" type="video/mp4">
 
     <!-- Devicons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
@@ -206,7 +214,7 @@
                             <span class="video-showcase-title">rahil@devops:~ — intro.mp4</span>
                         </div>
                         <div class="video-showcase-player">
-                            <video class="showcase-video" controls preload="metadata" poster="" id="showcase-video">
+                            <video class="showcase-video" controls preload="none" poster="" id="showcase-video" loading="lazy">
                                 <source src="intro-video.mp4" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
@@ -582,26 +590,26 @@
 
     </main><!-- /main-content -->
 
-    <!-- ===== SCRIPTS ===== -->
+    <!-- ===== SCRIPTS (all deferred for non-blocking load) ===== -->
     <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
     <!-- tsParticles -->
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js" defer></script>
     <!-- Typed.js -->
-    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js" defer></script>
     <!-- Vanilla Tilt -->
-    <script src="https://unpkg.com/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
+    <script src="https://unpkg.com/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js" defer></script>
     <!-- AOS -->
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js" defer></script>
 
     <!-- Preloader (runs first, before portfolio JS) -->
-    <script src="js/preloader.js"></script>
+    <script src="js/preloader.js" defer></script>
 
     <!-- Custom Scripts -->
-    <script src="js/three-scene.js"></script>
-    <script src="js/skills-orbs.js"></script>
-    <script src="js/main.js?v=2.0"></script>
-    <script src="js/command-palette.js"></script>
+    <script src="js/three-scene.js" defer></script>
+    <script src="js/skills-orbs.js" defer></script>
+    <script src="js/main.js?v=2.1" defer></script>
+    <script src="js/command-palette.js" defer></script>
 </body>
 
 </html>

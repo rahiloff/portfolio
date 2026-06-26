@@ -16,7 +16,7 @@
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setSize(section.offsetWidth, section.offsetHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
 
     // Skill orbs data
@@ -26,14 +26,14 @@
     ];
 
     const orbs = [];
-    const orbCount = 25;
+    const orbCount = 18;
 
     for (let i = 0; i < orbCount; i++) {
         const radius = 0.15 + Math.random() * 0.35;
         const color = skillColors[Math.floor(Math.random() * skillColors.length)];
 
         // Core orb
-        const geometry = new THREE.SphereGeometry(radius, 16, 16);
+        const geometry = new THREE.SphereGeometry(radius, 12, 12);
         const material = new THREE.MeshBasicMaterial({
             color: color,
             transparent: true,

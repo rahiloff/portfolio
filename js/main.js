@@ -5,6 +5,28 @@
 document.addEventListener('DOMContentLoaded', () => {
     const isMobile = window.innerWidth < 768;
 
+    // ===== LENIS SMOOTH SCROLL =====
+    let lenis;
+    if (typeof Lenis !== 'undefined') {
+        lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+    }
+
     // ===== HERO VIDEO SOUND TOGGLE =====
     const heroVideo = document.getElementById('hero-video');
     const videoToggle = document.getElementById('hero-video-toggle');
@@ -31,18 +53,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const navToggle = document.getElementById('nav-toggle');
     const sections = document.querySelectorAll('.section[id]');
 
-    // Scroll: add blur background (throttled via rAF)
+    // Scroll: add blur background, progress bar, back to top
+    const scrollProgress = document.getElementById('scroll-progress');
+    const backToTop = document.getElementById('back-to-top');
     let scrollTicking = false;
+
     window.addEventListener('scroll', () => {
         if (!scrollTicking) {
             scrollTicking = true;
             requestAnimationFrame(() => {
-                navbar.classList.toggle('scrolled', window.scrollY > 50);
+                const scrollY = window.scrollY;
+
+                // Scroll Progress
+                if (scrollProgress) {
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+                    scrollProgress.style.width = `${progress}%`;
+                }
+
+                // Back to Top visibility
+                if (backToTop) {
+                    backToTop.classList.toggle('visible', scrollY > window.innerHeight);
+                }
+
+                navbar.classList.toggle('scrolled', scrollY > 50);
                 updateActiveSection();
                 scrollTicking = false;
             });
         }
     }, { passive: true });
+
+    if (backToTop) {
+        backToTop.addEventListener('click', () => {
+            if (lenis) {
+                lenis.scrollTo(0);
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
 
     // Mobile hamburger
     navToggle.addEventListener('click', () => {
@@ -59,26 +108,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Active section highlight
+    const navPill = document.getElementById('nav-pill');
+    
     function updateActiveSection() {
         const scrollY = window.scrollY + 100;
+        let activeLink = null;
+
         sections.forEach(section => {
             const top = section.offsetTop;
             const height = section.offsetHeight;
             const id = section.getAttribute('id');
             const link = navLinks.querySelector(`a[href="#${id}"]`);
-            if (link) {
-                link.classList.toggle('active', scrollY >= top && scrollY < top + height);
+            
+            if (scrollY >= top && scrollY < top + height) {
+                if (link) {
+                    link.classList.add('active');
+                    activeLink = link;
+                }
+            } else if (link) {
+                link.classList.remove('active');
             }
         });
+
+        // Update nav pill position
+        if (activeLink && navPill && !isMobile) {
+            navPill.classList.add('active');
+            navPill.style.width = `${activeLink.offsetWidth}px`;
+            navPill.style.left = `${activeLink.offsetLeft}px`;
+        } else if (navPill && (scrollY < window.innerHeight / 2 || isMobile)) {
+            navPill.classList.remove('active');
+        }
     }
 
     // Smooth scroll for all anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
             e.preventDefault();
-            const target = document.querySelector(anchor.getAttribute('href'));
+            const href = anchor.getAttribute('href');
+            if (href === '#') return;
+            const target = document.querySelector(href);
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
+                if (lenis) {
+                    lenis.scrollTo(target);
+                } else {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
             }
         });
     });
@@ -183,6 +257,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 disable: false
             });
         }
+
+        // ===== STAGGERED REVEALS (Intersection Observer) =====
+        const staggerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    // Find children to stagger
+                    const children = target.querySelectorAll('.skill-tag, .project-card, .timeline-item');
+                    children.forEach((child, index) => {
+                        setTimeout(() => {
+                            child.style.opacity = '1';
+                            child.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    });
+                    staggerObserver.unobserve(target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.skills-grid, .projects-grid, .timeline').forEach(container => {
+            // Setup initial hidden state for custom stagger items
+            const children = container.querySelectorAll('.skill-tag, .project-card, .timeline-item');
+            children.forEach(child => {
+                // If it had AOS, remove it to use our custom stagger
+                child.removeAttribute('data-aos');
+                child.style.opacity = '0';
+                child.style.transform = 'translateY(20px)';
+                child.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            });
+            if (children.length > 0) {
+                staggerObserver.observe(container);
+            }
+        });
+
+        // ===== SKILL TAG RIPPLE EFFECT =====
+        document.querySelectorAll('.skill-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.remove('ripple');
+                void tag.offsetWidth; // trigger reflow
+                tag.classList.add('ripple');
+            });
+        });
 
         // ===== VANILLA TILT =====
         if (typeof VanillaTilt !== 'undefined' && !isMobile) {

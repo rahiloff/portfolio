@@ -118,6 +118,9 @@
     <!-- ===== MAIN PORTFOLIO CONTENT ===== -->
     <main id="main-content" class="main-content-hidden">
 
+        <!-- Scroll Progress Bar -->
+        <div id="scroll-progress" class="scroll-progress"></div>
+
         <!-- Particles Background -->
         <div id="tsparticles"></div>
 
@@ -126,6 +129,7 @@
             <div class="container">
                 <a href="#hero" class="nav-logo">&gt;_rahil<span class="blink">|</span></a>
                 <ul class="nav-links" id="nav-links">
+                    <div class="nav-pill" id="nav-pill"></div>
                     <li><a href="#about">about()</a></li>
                     <li><a href="#skills">skills()</a></li>
                     <li><a href="#experience">experience()</a></li>
@@ -231,6 +235,9 @@
             </div>
         </section>
 
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
+
         <!-- ===== ABOUT ===== -->
         <section class="section" id="about">
             <div class="container">
@@ -299,6 +306,9 @@
                 </div>
             </div>
         </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
 
         <!-- ===== SKILLS ===== -->
         <section class="section skills-section" id="skills">
@@ -372,6 +382,9 @@
             </div>
         </section>
 
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
+
         <!-- ===== EXPERIENCE ===== -->
         <section class="section" id="experience">
             <div class="container">
@@ -420,6 +433,9 @@
                 </div>
             </div>
         </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
 
         <!-- ===== PROJECTS ===== -->
         <section class="section" id="projects">
@@ -485,6 +501,9 @@
             </div>
         </section>
 
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
+
         <!-- ===== ACHIEVEMENTS ===== -->
         <section class="section" id="achievements">
             <div class="container">
@@ -517,6 +536,9 @@
                 </div>
             </div>
         </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
 
         <!-- ===== CONTACT ===== -->
         <section class="section" id="contact">
@@ -588,9 +610,16 @@
             </div>
         </footer>
 
+        <!-- Back to Top FAB -->
+        <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+
     </main><!-- /main-content -->
 
     <!-- ===== SCRIPTS (all deferred for non-blocking load) ===== -->
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
     <!-- tsParticles -->

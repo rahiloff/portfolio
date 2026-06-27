@@ -31,8 +31,24 @@
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
 html {
-    scroll-behavior: smooth;
     scroll-padding-top: var(--navbar-height);
+}
+
+/* Lenis Smooth Scroll Overrides */
+html.lenis, html.lenis body {
+    height: auto;
+}
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+    pointer-events: none;
 }
 
 body {
@@ -60,6 +76,47 @@ a:hover { color: var(--accent-green); }
     pointer-events: none;
 }
 
+/* ===== SCROLL PROGRESS BAR ===== */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+    transition: width 0.1s ease-out;
+}
+
+/* ===== SECTION DIVIDERS ===== */
+.section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.15), transparent);
+    position: relative;
+    margin: -1px 0; /* To prevent altering layout height */
+    z-index: 2;
+}
+.section-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 2px;
+    background: var(--accent-cyan);
+    border-radius: 2px;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.6);
+    opacity: 0.5;
+    animation: dividerPulse 4s infinite ease-in-out;
+}
+@keyframes dividerPulse {
+    0%, 100% { opacity: 0.2; width: 30px; }
+    50% { opacity: 0.8; width: 80px; box-shadow: 0 0 20px rgba(0, 245, 255, 0.8); }
+}
+
 /* ===== SECTION COMMON ===== */
 .section {
     position: relative;
@@ -84,10 +141,17 @@ a:hover { color: var(--accent-green); }
     font-size: 2.2rem;
     font-weight: 700;
     margin-bottom: 12px;
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+    background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--text-primary) 50%, var(--accent-green) 100%);
+    background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: titleShimmer 6s linear infinite;
+}
+
+@keyframes titleShimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
 }
 
 .section-title .prefix {
@@ -165,6 +229,71 @@ a:hover { color: var(--accent-green); }
     display: flex;
     list-style: none;
     gap: 32px;
+    position: relative;
+}
+
+.nav-pill {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 32px;
+    width: 0;
+    background: rgba(0, 245, 255, 0.1);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 245, 255, 0.3);
+    z-index: -1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+.nav-pill.active {
+    opacity: 1;
+}
+
+.nav-links a.skill-tag {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-tag:hover {
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    background: rgba(0, 245, 255, 0.1);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 245, 255, 0.2);
+}
+
+/* Skill Tag Ripple Effect */
+.skill-tag::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 5px; height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+.skill-tag.ripple::after {
+    animation: ripple 0.6s ease-out;
+}
+@keyframes ripple {
+    0% { transform: scale(0) translate(-50%, -50%); opacity: 0.5; }
+    100% { transform: scale(20) translate(-50%, -50%); opacity: 0; }
 }
 
 .nav-links a {
@@ -186,14 +315,12 @@ a:hover { color: var(--accent-green); }
     transition: width 0.3s ease;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
-    color: var(--accent-cyan);
+.nav-links a:hover::after {
+    width: 100%;
 }
 
-.nav-links a:hover::after,
-.nav-links a.active::after {
-    width: 100%;
+.nav-links a.active {
+    color: var(--accent-cyan);
 }
 
 .nav-toggle {
@@ -998,6 +1125,9 @@ a:hover { color: var(--accent-green); }
 }
 
 .project-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     padding: 32px;
     position: relative;
     overflow: hidden;
@@ -1008,14 +1138,39 @@ a:hover { color: var(--accent-green); }
     content: '';
     position: absolute;
     top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at top right, rgba(0, 245, 255, 0.1), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+/* Scan-line hover effect */
+.project-card::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
     width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+    height: 2px;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan);
     opacity: 0;
     transition: opacity 0.3s ease;
+    z-index: 10;
+    pointer-events: none;
 }
 
 .project-card:hover::before { opacity: 1; }
+.project-card:hover::after {
+    opacity: 1;
+    animation: scanLine 1.5s ease-in-out infinite;
+}
+
+@keyframes scanLine {
+    0% { top: -10%; }
+    100% { top: 110%; }
+}
 
 .project-icon {
     font-size: 2rem;
@@ -1139,21 +1294,22 @@ a:hover { color: var(--accent-green); }
 .form-input,
 .form-textarea {
     width: 100%;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 6px;
+    background: rgba(10, 10, 15, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     color: var(--text-primary);
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    transition: var(--transition);
-    outline: none;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 14px 16px;
+    transition: all 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-input:focus,
 .form-textarea:focus {
+    outline: none;
     border-color: var(--accent-cyan);
-    box-shadow: 0 0 12px rgba(0, 245, 255, 0.15);
+    background: rgba(13, 17, 23, 0.9);
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.3), inset 0 0 10px rgba(0, 245, 255, 0.1);
 }
 
 .form-input::placeholder,
@@ -1344,6 +1500,43 @@ a:hover { color: var(--accent-green); }
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== BACK TO TOP ===== */
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 900;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.back-to-top:hover {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+    transform: translateY(-4px);
+    color: var(--bg-primary);
+    background: var(--accent-cyan);
 }
 
 /* ===== PRELOADER ===== */
@@ -1956,6 +2149,11 @@ a:hover { color: var(--accent-green); }
 
     .cmd-toast {
         bottom: 88px;
+    }
+    
+    .back-to-top {
+        bottom: 88px;
+        left: 24px;
     }
 }
 

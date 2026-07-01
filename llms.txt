@@ -1,0 +1,17 @@
+# Mohammed Rahil T (Rahil)
+
+> Certified DevOps Engineer based in Kerala, India. Huawei Certified.
+> AWS, Docker, Kubernetes, Terraform, CI/CD.
+
+Mohammed Rahil T is a DevOps engineer available for freelance and full-time
+roles. Based in Malappuram, Kerala. Specializes in cloud infrastructure,
+container orchestration, and zero-downtime deployments.
+
+## Pages
+- [Home / Portfolio](https://therahil.shop/): overview, skills, experience, contact
+- [Résumé PDF](https://therahil.shop/Mohammed_Rahil_CV.pdf): full CV
+
+## Contact
+- Email: rahilkkln@gmail.com
+- LinkedIn: https://linkedin.com/in/rahilt
+- GitHub: https://github.com/rahiloff
